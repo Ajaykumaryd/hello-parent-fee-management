@@ -1,0 +1,9 @@
+# Test overrides. The datasource itself comes from the Testcontainers PostgreSQL (@ServiceConnection).
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop     # fresh schema for every test run
+
+app:
+  seed:
+    enabled: false              # tests create their own data

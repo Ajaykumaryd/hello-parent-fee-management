@@ -1,0 +1,29 @@
+# PostgreSQL. Defaults match docker-compose.yml; override with env vars DB_URL / DB_USER / DB_PASSWORD.
+spring:
+  application:
+    name: fee-management
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/feedb}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:Ajay@2001}
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: update          # tables auto-created from entities (use Flyway/Liquibase in prod)
+    open-in-view: false         # no lazy loading outside transactions
+    properties:
+      hibernate.format_sql: true
+      hibernate.jdbc.time_zone: UTC   # timestamps stored in UTC
+
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+app:
+  seed:
+    enabled: ${SEED_DATA:true}  # loads 2 schools + students + fees on startup (only if DB empty)
