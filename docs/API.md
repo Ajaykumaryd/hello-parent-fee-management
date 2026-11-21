@@ -19,6 +19,7 @@ Base path: `/api/v1` · JSON
 | 4 | Payment history of a fee | `GET /fees/{feeId}/payments?page=&size=` | 200 (paged, newest first) |
 | 5 | Students with pending fees | `GET /fees/pending-students?schoolId=&academicYear=&overdueOnly=&page=&size=` | 200 (paged, highest outstanding first) |
 | 6 | School fee summary | `GET /schools/{schoolId}/fee-summary?academicYear=` | 200 |
+| 7 | Students of a school | `GET /students?schoolId=&page=&size=` | 200 (paged, sorted by name) |
 | – | Setup / lookup | `POST /schools`, `GET /schools/{id}`, `POST /students`, `GET /students/{id}`, `GET /fees/{id}` | 201 / 200 |
 
 Pagination: `page` starts at 0, `size` 1–100 (default 20). Response:

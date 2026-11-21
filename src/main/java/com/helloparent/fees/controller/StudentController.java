@@ -2,6 +2,7 @@ package com.helloparent.fees.controller;
 
 import com.helloparent.fees.dto.request.CreateStudentRequest;
 import com.helloparent.fees.dto.response.ErrorResponse;
+import com.helloparent.fees.dto.response.PageResponse;
 import com.helloparent.fees.dto.response.StudentFeeDetailsResponse;
 import com.helloparent.fees.dto.response.StudentResponse;
 import com.helloparent.fees.entity.FeeStatus;
@@ -13,6 +14,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -40,6 +43,14 @@ public class StudentController {
         StudentResponse body = studentService.create(request);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(body.id()).toUri()).body(body);
+    }
+
+    @GetMapping
+    @Operation(summary = "List students of a school (paginated, sorted by name)")
+    public PageResponse<StudentResponse> list(@RequestParam Long schoolId,
+                                              @RequestParam(defaultValue = "0") @Min(0) int page,
+                                              @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+        return studentService.getStudentsBySchool(schoolId, page, size);
     }
 
     @GetMapping("/{studentId}")

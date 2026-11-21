@@ -1,12 +1,16 @@
 package com.helloparent.fees.service;
 
 import com.helloparent.fees.dto.request.CreateStudentRequest;
+import com.helloparent.fees.dto.response.PageResponse;
 import com.helloparent.fees.dto.response.StudentResponse;
 import com.helloparent.fees.entity.School;
 import com.helloparent.fees.entity.Student;
 import com.helloparent.fees.exception.ConflictException;
 import com.helloparent.fees.exception.ResourceNotFoundException;
 import com.helloparent.fees.repository.StudentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +44,19 @@ public class StudentService {
         return StudentResponse.from(getEntity(id));
     }
 
+    @Transactional(readOnly = true)
+    public PageResponse<StudentResponse> getStudentsBySchool(Long schoolId, int page, int size) {
+        schoolService.getEntity(schoolId); // 404 if school doesn't exist
+        Sort sort = Sort.by("name").ascending().and(Sort.by("id").ascending());
+        Page<Student> students = studentRepository.findBySchoolId(schoolId, PageRequest.of(page, size, sort));
+        return PageResponse.of(students, StudentResponse::from);
+    }
+
     /** Student with school eagerly loaded. */
     @Transactional(readOnly = true)
     public Student getEntity(Long id) {
-        return studentRepository.findWithSchoolById(id).orElseThrow(() -> new ResourceNotFoundException("Student", id));
+        return studentRepository.
+                findWithSchoolById(id).orElseThrow(()
+                        -> new ResourceNotFoundException("Student", id));
     }
 }
